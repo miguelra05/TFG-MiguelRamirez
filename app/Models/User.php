@@ -60,4 +60,28 @@ class User extends Authenticatable
     {
         return $this->hasMany(User::class, 'empresa_id');
     }
+    public function formaciones()
+    {
+        return $this->hasMany(Formacion::class);
+    }
+
+    public function experiencias()
+    {
+        return $this->hasMany(Experiencia::class);
+    }
+
+    public function certificaciones()
+    {
+        return $this->hasMany(Certificacion::class);
+    }
+
+    public function habilidades()
+    {
+        return $this->hasMany(Habilidad::class);
+    }
+
+    public function curriculums()
+    {
+        return $this->hasMany(Curriculum::class);
+    }
 }

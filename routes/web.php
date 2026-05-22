@@ -27,6 +27,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/documents/{document}', [App\Http\Controllers\DocumentController::class, 'destroy'])->name('documents.destroy');
     Route::patch('/documents/{document}/visibility', [App\Http\Controllers\DocumentController::class, 'updateVisibility'])->name('documents.visibility');
     Route::get('/documents/download/{document}', [App\Http\Controllers\DocumentController::class, 'download'])->name('documents.download');
+    //curriculum
+    Route::get('/cv', [App\Http\Controllers\CVController::class, 'index'])->name('cv.index');
 
     Route::get('/api/events', [EventsController::class, 'index']);
     Route::post('/api/events', [EventsController::class, 'store']);
