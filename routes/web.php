@@ -29,7 +29,21 @@ Route::middleware('auth')->group(function () {
     Route::get('/documents/download/{document}', [App\Http\Controllers\DocumentController::class, 'download'])->name('documents.download');
     //curriculum
     Route::get('/cv', [App\Http\Controllers\CVController::class, 'index'])->name('cv.index');
-
+    //certificaciones
+    Route::post('/certificaciones', [App\Http\Controllers\CVController::class, 'storeCertificacion'])->name('certificaciones.store');
+    Route::delete('/certificaciones/{id}', [App\Http\Controllers\CVController::class, 'destroyCertificacion'])->name('certificaciones.destroy');
+    //habilidades
+    Route::post('/habilidades', [App\Http\Controllers\CVController::class, 'storeHabilidad'])->name('habilidades.store');
+    Route::delete('/habilidades/{id}', [App\Http\Controllers\CVController::class, 'destroyHabilidad'])->name('habilidades.destroy');
+    //formaciones
+    Route::post('/formaciones', [App\Http\Controllers\CVController::class, 'storeFormacion'])->name('formaciones.store');
+    Route::delete('/formaciones/{id}', [App\Http\Controllers\CVController::class, 'destroyFormacion'])->name('formaciones.destroy');
+    //experiencias
+    Route::post('/experiencias', [App\Http\Controllers\CVController::class, 'storeExperiencia'])->name('experiencias.store');
+    Route::delete('/experiencias/{id}', [App\Http\Controllers\CVController::class, 'destroyExperiencia'])->name('experiencias.destroy');
+    //descarga pdf
+    Route::get('/cv/export', [App\Http\Controllers\CVController::class, 'exportPdf'])->name('cv.export');
+    //otros
     Route::get('/api/events', [EventsController::class, 'index']);
     Route::post('/api/events', [EventsController::class, 'store']);
     Route::put('/api/events/{event}', [EventsController::class, 'update']);
