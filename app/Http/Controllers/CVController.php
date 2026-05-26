@@ -5,17 +5,25 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\User;
 
 class CVController extends Controller
 {
     public function index()
     {
         $user = Auth::user();
-
-        // Cargar las relaciones
         $user->load(['formaciones', 'experiencias', 'certificaciones', 'habilidades']);
+        $isOwner = true;
 
-        return view('cv.index', compact('user'));
+        return view('cv.index', compact('user', 'isOwner'));
+    }
+    //vista pública
+    public function showPublic($userId)
+    {
+        $user = User::with(['formaciones', 'experiencias', 'certificaciones', 'habilidades'])->findOrFail($userId);
+        $isOwner = Auth::check() && Auth::id() == $user->id;
+
+        return view('cv.index', compact('user', 'isOwner'));
     }
     // certificaciones
     public function storeCertificacion(Request $request)

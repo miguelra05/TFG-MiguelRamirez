@@ -1,7 +1,11 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Mi Currículum') }}
+            @if($isOwner)
+                {{ __('Mi Currículum') }}
+            @else
+                {{ __('Currículum de ') . $user->name . ' ' . $user->apellidos }}
+            @endif
         </h2>
     </x-slot>
 
@@ -9,11 +13,18 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
-                    <div class="flex justify-end space-x-2 mb-6">
-                        <a href="{{ route('cv.export') }}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-                            Exportar PDF
-                        </a>
-                    </div>
+
+                    @if($isOwner)
+                        <div class="flex justify-end space-x-2 mb-6">
+                            <button onclick="copyPublicLink()" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                                Obtener enlace público
+                            </button>
+                            <a href="{{ route('cv.export') }}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                                Exportar PDF
+                            </a>
+                        </div>
+                    @endif
+
                     {{-- Grid 4x2 del CV --}}
                     <div class="cv-container" style="width: 210mm; min-height: 297mm; margin: 0 auto; background: white; box-shadow: 0 0 15px rgba(0,0,0,0.1); padding: 0;">
                         <div class="cv-grid" style="display: grid; grid-template-columns: 1fr 2fr; gap: 0;">
@@ -59,7 +70,9 @@
                                 <div class="cv-section mb-6">
                                     <div class="flex justify-between items-center border-b-2 border-blue-500 pb-2 mb-3">
                                         <h3 class="text-lg font-bold text-gray-800">Certificaciones</h3>
-                                        <button onclick="openCertificacionModal()" class="text-blue-500 hover:text-blue-700 text-sm">+ Añadir</button>
+                                        @if($isOwner)
+                                            <button onclick="openCertificacionModal()" class="text-blue-500 hover:text-blue-700 text-sm">+ Añadir</button>
+                                        @endif
                                     </div>
                                     <div id="certificaciones-list" class="space-y-2">
                                         @foreach($user->certificaciones as $cert)
@@ -72,7 +85,9 @@
                                                             <div class="text-gray-500 text-xs mt-1">{{ $cert->descripcion }}</div>
                                                         @endif
                                                     </div>
-                                                    <button onclick="deleteCertificacion({{ $cert->id }})" class="text-red-500 hover:text-red-700 text-xs">Eliminar</button>
+                                                    @if($isOwner)
+                                                        <button onclick="deleteCertificacion({{ $cert->id }})" class="text-red-500 hover:text-red-700 text-xs">Eliminar</button>
+                                                    @endif
                                                 </div>
                                             </div>
                                         @endforeach
@@ -83,13 +98,17 @@
                                 <div class="cv-section">
                                     <div class="flex justify-between items-center border-b-2 border-blue-500 pb-2 mb-3">
                                         <h3 class="text-lg font-bold text-gray-800">Habilidades</h3>
-                                        <button onclick="openHabilidadModal()" class="text-blue-500 hover:text-blue-700 text-sm">+ Añadir</button>
+                                        @if($isOwner)
+                                            <button onclick="openHabilidadModal()" class="text-blue-500 hover:text-blue-700 text-sm">+ Añadir</button>
+                                        @endif
                                     </div>
                                     <div id="habilidades-list" class="flex flex-wrap gap-2">
                                         @foreach($user->habilidades as $hab)
                                             <div class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm flex items-center" data-id="{{ $hab->id }}">
                                                 <span>{{ $hab->nombre }}</span>
-                                                <button onclick="deleteHabilidad({{ $hab->id }})" class="ml-2 text-red-500 hover:text-red-700">X</button>
+                                                @if($isOwner)
+                                                    <button onclick="deleteHabilidad({{ $hab->id }})" class="ml-2 text-red-500 hover:text-red-700">X</button>
+                                                @endif
                                             </div>
                                         @endforeach
                                     </div>
@@ -123,7 +142,9 @@
                                 <div class="cv-section mb-6">
                                     <div class="flex justify-between items-center border-b-2 border-blue-500 pb-2 mb-3">
                                         <h3 class="text-lg font-bold text-gray-800">Formación académica</h3>
-                                        <button onclick="openFormacionModal()" class="text-blue-500 hover:text-blue-700 text-sm">+ Añadir</button>
+                                        @if($isOwner)
+                                            <button onclick="openFormacionModal()" class="text-blue-500 hover:text-blue-700 text-sm">+ Añadir</button>
+                                        @endif
                                     </div>
                                     <div id="formaciones-list" class="space-y-3">
                                         @foreach($user->formaciones as $form)
@@ -137,7 +158,9 @@
                                                             <div class="text-gray-500 text-sm mt-1">{{ $form->descripcion }}</div>
                                                         @endif
                                                     </div>
-                                                    <button onclick="deleteFormacion({{ $form->id }})" class="text-red-500 hover:text-red-700 text-xs">Eliminar</button>
+                                                    @if($isOwner)
+                                                        <button onclick="deleteFormacion({{ $form->id }})" class="text-red-500 hover:text-red-700 text-xs">Eliminar</button>
+                                                    @endif
                                                 </div>
                                             </div>
                                         @endforeach
@@ -148,7 +171,9 @@
                                 <div class="cv-section">
                                     <div class="flex justify-between items-center border-b-2 border-blue-500 pb-2 mb-3">
                                         <h3 class="text-lg font-bold text-gray-800">Experiencia laboral</h3>
-                                        <button onclick="openExperienciaModal()" class="text-blue-500 hover:text-blue-700 text-sm">+ Añadir</button>
+                                        @if($isOwner)
+                                            <button onclick="openExperienciaModal()" class="text-blue-500 hover:text-blue-700 text-sm">+ Añadir</button>
+                                        @endif
                                     </div>
                                     <div id="experiencias-list" class="space-y-3">
                                         @foreach($user->experiencias as $exp)
@@ -162,7 +187,9 @@
                                                             <div class="text-gray-500 text-sm mt-1">{{ $exp->descripcion }}</div>
                                                         @endif
                                                     </div>
-                                                    <button onclick="deleteExperiencia({{ $exp->id }})" class="text-red-500 hover:text-red-700 text-xs">Eliminar</button>
+                                                    @if($isOwner)
+                                                        <button onclick="deleteExperiencia({{ $exp->id }})" class="text-red-500 hover:text-red-700 text-xs">Eliminar</button>
+                                                    @endif
                                                 </div>
                                             </div>
                                         @endforeach
@@ -229,144 +256,155 @@
         </div>
     </div>
     <!--modales-->
-        <!--certificaciones-->
-    <div id="certificacionModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden items-center justify-center z-50">
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-bold text-gray-900">Añadir certificación</h3>
-                <button onclick="closeCertificacionModal()" class="text-gray-400 hover:text-gray-600">✖</button>
-            </div>
+    <!--certificaciones-->
+    @if($isOwner)
+        <div id="certificacionModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden items-center justify-center z-50">
+            <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-bold text-gray-900">Añadir certificación</h3>
+                    <button onclick="closeCertificacionModal()" class="text-gray-400 hover:text-gray-600">✖</button>
+                </div>
 
-            <form id="certificacionForm">
-                @csrf
-                <div class="mb-3">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Título *</label>
-                    <input type="text" name="titulo" required class="w-full border-gray-300 rounded-md shadow-sm">
-                </div>
-                <div class="mb-3">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Emisor *</label>
-                    <input type="text" name="nombre_emisor" required class="w-full border-gray-300 rounded-md shadow-sm">
-                </div>
-                <div class="mb-3">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Fecha de obtención *</label>
-                    <input type="date" name="fecha_obtencion" required class="w-full border-gray-300 rounded-md shadow-sm">
-                </div>
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
-                    <textarea name="descripcion" rows="3" class="w-full border-gray-300 rounded-md shadow-sm"></textarea>
-                </div>
-                <div class="flex justify-end space-x-2">
-                    <button type="button" onclick="closeCertificacionModal()" class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400">Cancelar</button>
-                    <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Guardar</button>
-                </div>
-            </form>
+                <form id="certificacionForm">
+                    @csrf
+                    <div class="mb-3">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Título *</label>
+                        <input type="text" name="titulo" required class="w-full border-gray-300 rounded-md shadow-sm">
+                    </div>
+                    <div class="mb-3">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Emisor *</label>
+                        <input type="text" name="nombre_emisor" required class="w-full border-gray-300 rounded-md shadow-sm">
+                    </div>
+                    <div class="mb-3">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Fecha de obtención *</label>
+                        <input type="date" name="fecha_obtencion" required class="w-full border-gray-300 rounded-md shadow-sm">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
+                        <textarea name="descripcion" rows="3" class="w-full border-gray-300 rounded-md shadow-sm"></textarea>
+                    </div>
+                    <div class="flex justify-end space-x-2">
+                        <button type="button" onclick="closeCertificacionModal()" class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400">Cancelar</button>
+                        <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Guardar</button>
+                    </div>
+                </form>
+            </div>
         </div>
-    </div>
+
         <!--habilidades-->
-    {{-- Modal Añadir Habilidad --}}
-    <div id="habilidadModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden items-center justify-center z-50">
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-bold text-gray-900">Añadir habilidad</h3>
-                <button onclick="closeHabilidadModal()" class="text-gray-400 hover:text-gray-600">✖</button>
-            </div>
+        <div id="habilidadModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden items-center justify-center z-50">
+            <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-bold text-gray-900">Añadir habilidad</h3>
+                    <button onclick="closeHabilidadModal()" class="text-gray-400 hover:text-gray-600">✖</button>
+                </div>
 
-            <form id="habilidadForm">
-                @csrf
-                <div class="mb-3">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Nombre *</label>
-                    <input type="text" name="nombre" required class="w-full border-gray-300 rounded-md shadow-sm">
-                </div>
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
-                    <textarea name="descripcion" rows="2" class="w-full border-gray-300 rounded-md shadow-sm"></textarea>
-                </div>
-                <div class="flex justify-end space-x-2">
-                    <button type="button" onclick="closeHabilidadModal()" class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400">Cancelar</button>
-                    <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Guardar</button>
-                </div>
-            </form>
-        </div>
-    </div>
-    <!--formaciones-->
-    <div id="formacionModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden items-center justify-center z-50">
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-bold text-gray-900">Añadir formación académica</h3>
-                <button onclick="closeFormacionModal()" class="text-gray-400 hover:text-gray-600">✖</button>
+                <form id="habilidadForm">
+                    @csrf
+                    <div class="mb-3">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Nombre *</label>
+                        <input type="text" name="nombre" required class="w-full border-gray-300 rounded-md shadow-sm">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
+                        <textarea name="descripcion" rows="2" class="w-full border-gray-300 rounded-md shadow-sm"></textarea>
+                    </div>
+                    <div class="flex justify-end space-x-2">
+                        <button type="button" onclick="closeHabilidadModal()" class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400">Cancelar</button>
+                        <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Guardar</button>
+                    </div>
+                </form>
             </div>
-
-            <form id="formacionForm">
-                @csrf
-                <div class="mb-3">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Título *</label>
-                    <input type="text" name="titulo" required class="w-full border-gray-300 rounded-md shadow-sm">
-                </div>
-                <div class="mb-3">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Institución *</label>
-                    <input type="text" name="institucion" required class="w-full border-gray-300 rounded-md shadow-sm">
-                </div>
-                <div class="mb-3">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Fecha inicio *</label>
-                    <input type="date" name="fecha_inicio" required class="w-full border-gray-300 rounded-md shadow-sm">
-                </div>
-                <div class="mb-3">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Fecha fin</label>
-                    <input type="date" name="fecha_fin" class="w-full border-gray-300 rounded-md shadow-sm">
-                    <p class="text-xs text-gray-500 mt-1">Dejar vacío si es actualidad</p>
-                </div>
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
-                    <textarea name="descripcion" rows="3" class="w-full border-gray-300 rounded-md shadow-sm"></textarea>
-                </div>
-                <div class="flex justify-end space-x-2">
-                    <button type="button" onclick="closeFormacionModal()" class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400">Cancelar</button>
-                    <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Guardar</button>
-                </div>
-            </form>
         </div>
-    </div>
-    <!--experiencia-->
-    {{-- Modal Añadir Experiencia --}}
-    <div id="experienciaModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden items-center justify-center z-50">
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-bold text-gray-900">Añadir experiencia laboral</h3>
-                <button onclick="closeExperienciaModal()" class="text-gray-400 hover:text-gray-600">✖</button>
+
+        <!--formaciones-->
+        <div id="formacionModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden items-center justify-center z-50">
+            <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-bold text-gray-900">Añadir formación académica</h3>
+                    <button onclick="closeFormacionModal()" class="text-gray-400 hover:text-gray-600">✖</button>
+                </div>
+
+                <form id="formacionForm">
+                    @csrf
+                    <div class="mb-3">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Título *</label>
+                        <input type="text" name="titulo" required class="w-full border-gray-300 rounded-md shadow-sm">
+                    </div>
+                    <div class="mb-3">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Institución *</label>
+                        <input type="text" name="institucion" required class="w-full border-gray-300 rounded-md shadow-sm">
+                    </div>
+                    <div class="mb-3">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Fecha inicio *</label>
+                        <input type="date" name="fecha_inicio" required class="w-full border-gray-300 rounded-md shadow-sm">
+                    </div>
+                    <div class="mb-3">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Fecha fin</label>
+                        <input type="date" name="fecha_fin" class="w-full border-gray-300 rounded-md shadow-sm">
+                        <p class="text-xs text-gray-500 mt-1">Dejar vacío si es actualidad</p>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
+                        <textarea name="descripcion" rows="3" class="w-full border-gray-300 rounded-md shadow-sm"></textarea>
+                    </div>
+                    <div class="flex justify-end space-x-2">
+                        <button type="button" onclick="closeFormacionModal()" class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400">Cancelar</button>
+                        <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Guardar</button>
+                    </div>
+                </form>
             </div>
-
-            <form id="experienciaForm">
-                @csrf
-                <div class="mb-3">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Puesto *</label>
-                    <input type="text" name="puesto" required class="w-full border-gray-300 rounded-md shadow-sm">
-                </div>
-                <div class="mb-3">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Empresa *</label>
-                    <input type="text" name="empresa" required class="w-full border-gray-300 rounded-md shadow-sm">
-                </div>
-                <div class="mb-3">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Fecha inicio *</label>
-                    <input type="date" name="fecha_inicio" required class="w-full border-gray-300 rounded-md shadow-sm">
-                </div>
-                <div class="mb-3">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Fecha fin</label>
-                    <input type="date" name="fecha_fin" class="w-full border-gray-300 rounded-md shadow-sm">
-                    <p class="text-xs text-gray-500 mt-1">Dejar vacío si es actualidad</p>
-                </div>
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
-                    <textarea name="descripcion" rows="3" class="w-full border-gray-300 rounded-md shadow-sm"></textarea>
-                </div>
-                <div class="flex justify-end space-x-2">
-                    <button type="button" onclick="closeExperienciaModal()" class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400">Cancelar</button>
-                    <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Guardar</button>
-                </div>
-            </form>
         </div>
-    </div>
-    {{-- Modales y JavaScript para CRUD (implementación posterior) --}}
+
+        <!--experiencia-->
+        <div id="experienciaModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden items-center justify-center z-50">
+            <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-bold text-gray-900">Añadir experiencia laboral</h3>
+                    <button onclick="closeExperienciaModal()" class="text-gray-400 hover:text-gray-600">✖</button>
+                </div>
+
+                <form id="experienciaForm">
+                    @csrf
+                    <div class="mb-3">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Puesto *</label>
+                        <input type="text" name="puesto" required class="w-full border-gray-300 rounded-md shadow-sm">
+                    </div>
+                    <div class="mb-3">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Empresa *</label>
+                        <input type="text" name="empresa" required class="w-full border-gray-300 rounded-md shadow-sm">
+                    </div>
+                    <div class="mb-3">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Fecha inicio *</label>
+                        <input type="date" name="fecha_inicio" required class="w-full border-gray-300 rounded-md shadow-sm">
+                    </div>
+                    <div class="mb-3">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Fecha fin</label>
+                        <input type="date" name="fecha_fin" class="w-full border-gray-300 rounded-md shadow-sm">
+                        <p class="text-xs text-gray-500 mt-1">Dejar vacío si es actualidad</p>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
+                        <textarea name="descripcion" rows="3" class="w-full border-gray-300 rounded-md shadow-sm"></textarea>
+                    </div>
+                    <div class="flex justify-end space-x-2">
+                        <button type="button" onclick="closeExperienciaModal()" class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400">Cancelar</button>
+                        <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    @endif
+
     <script>
+        @if($isOwner)
+        function copyPublicLink() {
+            const url = '{{ url("/cv/" . Auth::id()) }}';
+            navigator.clipboard.writeText(url);
+            alert('Enlace copiado al portapapeles: ' + url);
+        }
+        @endif
+        @if($isOwner)
         // Modal elementos
         const modal = document.getElementById('certificacionModal');
         const form = document.getElementById('certificacionForm');
@@ -398,7 +436,6 @@
             })
                 .then(response => response.json())
                 .then(data => {
-                    // Añadir el nuevo elemento a la lista
                     const newElement = `
                 <div class="bg-white p-2 rounded shadow-sm text-sm" data-id="${data.id}">
                     <div class="flex justify-between items-start">
@@ -435,6 +472,7 @@
                     });
             }
         }
+
         // Modal Habilidad
         const habilidadModal = document.getElementById('habilidadModal');
         const habilidadForm = document.getElementById('habilidadForm');
@@ -500,6 +538,7 @@
                     });
             }
         }
+
         // Modal Formación
         const formacionModal = document.getElementById('formacionModal');
         const formacionForm = document.getElementById('formacionForm');
@@ -575,6 +614,7 @@
                     });
             }
         }
+
         // Modal Experiencia
         const experienciaModal = document.getElementById('experienciaModal');
         const experienciaForm = document.getElementById('experienciaForm');
@@ -650,5 +690,6 @@
                     });
             }
         }
+        @endif
     </script>
 </x-app-layout>

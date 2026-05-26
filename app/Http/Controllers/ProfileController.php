@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
-use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
@@ -23,7 +22,7 @@ class ProfileController extends Controller
     {
         $user = $request->user();
 
-        // Datos básicos (validados por ProfileUpdateRequest)
+        // Datos básicos
         $user->fill($request->validated());
 
         // Campos adicionales
@@ -34,13 +33,30 @@ class ProfileController extends Controller
 
         // Foto de perfil
         if ($request->hasFile('foto_perfil')) {
+            $file = $request->file('foto_perfil');
+            $extension = $file->getClientOriginalExtension();
+
             // Borrar foto anterior si existe
             if ($user->foto_perfil) {
-                Storage::disk('public')->delete($user->foto_perfil);
+                $oldPath = storage_path('app/public/' . $user->foto_perfil);
+                if (file_exists($oldPath)) {
+                    unlink($oldPath);
+                }
             }
 
-            $path = $request->file('foto_perfil')->store('profile_photos', 'public');
-            $user->foto_perfil = $path;
+            // Crear carpeta si no existe
+            $uploadPath = storage_path('app/public/profile_photos');
+            if (!file_exists($uploadPath)) {
+                mkdir($uploadPath, 0777, true);
+            }
+
+            // Generar nombre único y mover archivo
+            $fileName = time() . '_' . rand(1000, 9999) . '.' . $extension;
+            $fullPath = $uploadPath . '/' . $fileName;
+
+            if (move_uploaded_file($file->getPathname(), $fullPath)) {
+                $user->foto_perfil = 'profile_photos/' . $fileName;
+            }
         }
 
         if ($user->isDirty('email')) {
@@ -63,7 +79,10 @@ class ProfileController extends Controller
         Auth::logout();
 
         if ($user->foto_perfil) {
-            Storage::disk('public')->delete($user->foto_perfil);
+            $oldPath = storage_path('app/public/' . $user->foto_perfil);
+            if (file_exists($oldPath)) {
+                unlink($oldPath);
+            }
         }
 
         $user->delete();

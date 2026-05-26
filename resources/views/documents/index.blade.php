@@ -9,7 +9,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
-
+                @if($isOwner)
                     {{-- Mensajes de éxito/error --}}
                     @if(session('success'))
                         <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
@@ -55,7 +55,12 @@
                             </div>
                         </form>
                     </div>
-
+                    {{-- Botón para copiar enlace público del portafolio --}}
+                    <div class="mb-4 flex justify-end">
+                        <button onclick="copyPublicPortfolioLink()" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                            Copiar enlace de mi portafolio público
+                        </button>
+                    </div>
                     {{-- Tabla de documentos --}}
                     @if($documents->isEmpty())
                         <div class="text-center py-8 text-gray-500">
@@ -111,6 +116,7 @@
                             </table>
                         </div>
                     @endif
+                @endif
                 </div>
             </div>
         </div>
@@ -134,5 +140,19 @@
                 }
             });
         }
+
+        @if(isset($isOwner) && $isOwner)
+        function copyPublicPortfolioLink() {
+            const url = '{{ url("/portfolio/" . Auth::id()) }}';
+            navigator.clipboard.writeText(url);
+            Swal.fire({
+                title: 'Enlace copiado',
+                text: url,
+                icon: 'success',
+                timer: 2000,
+                showConfirmButton: false
+            });
+        }
+        @endif
     </script>
 </x-app-layout>

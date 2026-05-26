@@ -6,6 +6,7 @@ use App\Models\Documento;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use App\Models\User;
 
 class DocumentController extends Controller
 {
@@ -15,9 +16,22 @@ class DocumentController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return view('documents.index', compact('documents'));
-    }
+        $isOwner = true;
+        $user = Auth::user();
 
+        return view('documents.index', compact('documents', 'isOwner', 'user'));
+    }
+    public function publicIndex($userId)
+    {
+        $user = User::findOrFail($userId);
+        $documents = Documento::where('user_id', $userId)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $isOwner = Auth::check() && Auth::id() == $user->id;
+
+        return view('documents.index', compact('user', 'documents', 'isOwner'));
+    }
     public function store(Request $request)
     {
         $request->validate([

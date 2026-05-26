@@ -8,10 +8,13 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
+Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
+//vista pública del cv
+Route::get('/cv/{user}', [App\Http\Controllers\CVController::class, 'showPublic'])->name('cv.public');
+//vista pública portafolio
+Route::get('/portfolio/{user}', [App\Http\Controllers\DocumentController::class, 'publicIndex'])->name('portfolio.public');
 Route::middleware('auth')->group(function () {
     //perfil
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
