@@ -12,6 +12,7 @@ Route::get('/dashboard', [App\Http\Controllers\DashboardController::class, 'inde
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 //vista pública del cv
+Route::get('/cv/export', [App\Http\Controllers\CVController::class, 'exportPdf'])->name('cv.export');
 Route::get('/cv/{user}', [App\Http\Controllers\CVController::class, 'showPublic'])->name('cv.public');
 //vista pública portafolio
 Route::get('/portfolio/{user}', [App\Http\Controllers\DocumentController::class, 'publicIndex'])->name('portfolio.public');

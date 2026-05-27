@@ -35,7 +35,7 @@
                                 {{-- Celda 1,1: Foto --}}
                                 <div class="cv-section mb-6 text-center">
                                     @if($user->foto_perfil)
-                                        <img src="{{ Storage::url($user->foto_perfil) }}" class="rounded-full w-32 h-32 object-cover mx-auto border-4 border-blue-500">
+                                        <img src="{{ asset('storage/' . $user->foto_perfil) }}" class="rounded-full w-32 h-32 object-cover mx-auto border-4 border-blue-500">
                                     @else
                                         <div class="rounded-full w-32 h-32 bg-gray-300 mx-auto flex items-center justify-center border-4 border-blue-500">
                                             <span class="text-gray-500 text-4xl">Sin foto</span>
@@ -130,8 +130,8 @@
                                 <div class="cv-section mb-6">
                                     <h3 class="text-lg font-bold text-gray-800 border-b-2 border-blue-500 pb-2 mb-3">Sobre mí</h3>
                                     <div class="text-gray-700 text-sm leading-relaxed text-justify">
-                                        @if($user->descripcion_personal)
-                                            <p>{{ $user->descripcion_personal }}</p>
+                                        @if($user->biografia)
+                                            <p>{{ $user->biografia }}</p>
                                         @else
                                             <p class="text-gray-400 italic">Añade una descripción personal desde tu perfil.</p>
                                         @endif
@@ -395,13 +395,19 @@
             </div>
         </div>
     @endif
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         @if($isOwner)
         function copyPublicLink() {
             const url = '{{ url("/cv/" . Auth::id()) }}';
             navigator.clipboard.writeText(url);
-            alert('Enlace copiado al portapapeles: ' + url);
+            Swal.fire({
+                title: 'Enlace copiado',
+                text: url,
+                icon: 'success',
+                timer: 2000,
+                showConfirmButton: false
+            });
         }
         @endif
         @if($isOwner)

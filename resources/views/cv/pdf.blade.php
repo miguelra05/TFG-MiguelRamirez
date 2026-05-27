@@ -206,7 +206,7 @@
 
                 <div class="cv-section">
                     <h3>Sobre mí</h3>
-                    <div class="texto">{{ $user->descripcion_personal ?? 'Sin descripción' }}</div>
+                    <div class="texto">{{ $user->biografia ?? 'Sin descripción' }}</div>
                 </div>
 
                 <div class="cv-section">
