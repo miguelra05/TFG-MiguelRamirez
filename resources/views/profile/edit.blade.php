@@ -7,6 +7,25 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+            <div class="mt-4">
+                <button onclick="copyPublicProfileLink()" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                    Copiar enlace de mi perfil público
+                </button>
+            </div>
+
+            <script>
+                function copyPublicProfileLink() {
+                    const url = '{{ url("/profile/" . Auth::id()) }}';
+                    navigator.clipboard.writeText(url);
+                    Swal.fire({
+                        title: 'Enlace copiado',
+                        text: url,
+                        icon: 'success',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                }
+            </script>
             {{-- Formulario de información personal --}}
             <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
                 <div class="max-w-xl">
