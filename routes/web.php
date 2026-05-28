@@ -53,7 +53,17 @@ Route::middleware('auth')->group(function () {
     Route::put('/api/events/{event}', [EventsController::class, 'update']);
     Route::delete('/api/events/{event}', [EventsController::class, 'destroy']);
     Route::get('/api/events/{event}', [EventsController::class, 'show']);
+    //para perfil de empresa
+    Route::middleware(['auth', 'company'])->group(function () {
+        Route::get('/company/employees', [App\Http\Controllers\CompanyController::class, 'employees'])->name('company.employees');
+        Route::post('/company/add-employee', [App\Http\Controllers\CompanyController::class, 'addEmployee'])->name('company.addEmployee');
+        Route::get('/company/calendar/{employee}', [App\Http\Controllers\CompanyController::class, 'viewEmployeeCalendar'])->name('company.calendar');
+        Route::post('/company/calendar/{employee}/event', [App\Http\Controllers\CompanyController::class, 'storeEmployeeEvent'])->name('company.storeEvent');
+    });
+
 });
 // Ruta pública para documentos (sin autenticación)
 Route::get('/documents/public/{document}', [App\Http\Controllers\DocumentController::class, 'publicDownload'])->name('documents.public');
+// para visualización del calendario por parte de la empresa
+Route::get('/api/events/employee/{id}', [EventsController::class, 'employeeEvents'])->middleware('company');
 require __DIR__.'/auth.php';

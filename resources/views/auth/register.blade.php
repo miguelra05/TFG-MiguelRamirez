@@ -57,6 +57,12 @@
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
                     </div>
+                    <div class="flex items-center mt-4">
+                        <input id="is_company" name="is_company" type="checkbox" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                        <label for="is_company" class="ml-2 block text-sm text-gray-900">
+                            Registrar como cuenta de empresa
+                        </label>
+                    </div>
                 </div>
 
                 <div>

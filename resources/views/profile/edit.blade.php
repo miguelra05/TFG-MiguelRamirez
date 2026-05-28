@@ -23,11 +23,13 @@
                             <x-input-error class="mt-2" :messages="$errors->get('name')" />
                         </div>
 
-                        <div>
-                            <x-input-label for="apellidos" :value="__('Apellidos')" />
-                            <x-text-input id="apellidos" name="apellidos" type="text" class="mt-1 block w-full" :value="old('apellidos', $user->apellidos)" />
-                            <x-input-error class="mt-2" :messages="$errors->get('apellidos')" />
-                        </div>
+                        @if(Auth::user()->role !== 'empresa')
+                            <div>
+                                <x-input-label for="apellidos" :value="__('Apellidos')" />
+                                <x-text-input id="apellidos" name="apellidos" type="text" class="mt-1 block w-full" :value="old('apellidos', $user->apellidos)" />
+                                <x-input-error class="mt-2" :messages="$errors->get('apellidos')" />
+                            </div>
+                        @endif
 
                         <div>
                             <x-input-label for="email" :value="__('Email')" />

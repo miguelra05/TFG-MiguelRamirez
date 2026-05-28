@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Event;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 class EventsController extends Controller
 {
@@ -82,5 +83,17 @@ class EventsController extends Controller
 
         $event->delete();
         return response()->json(['message' => 'Evento eliminado']);
+    }
+    public function employeeEvents($id)
+    {
+        $employee = User::findOrFail($id);
+
+        // Verificar que la empresa tiene acceso a este empleado
+        if (auth()->user()->role === 'empresa' && $employee->empresa_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $events = Event::where('user_id', $id)->get();
+        return response()->json($events);
     }
 }

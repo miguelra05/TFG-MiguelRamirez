@@ -13,13 +13,16 @@
                 <!-- Navigation Links - Solo para usuarios logueados -->
                 @auth
                     <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                        <x-nav-link :href="url('/dashboard')" :active="request()->routeIs('dashboard')" class="text-white hover:text-blue-200 font-medium">
-                            {{ __('Dashboard') }}
-                        </x-nav-link>
 
-                        <x-nav-link :href="route('cv.index')" :active="request()->routeIs('cv.index')" class="text-white hover:text-blue-200 font-medium">
-                            {{ __('Mi CV') }}
-                        </x-nav-link>
+                        @if(Auth::user()->role === 'empresa')
+                            <x-nav-link :href="url('/company/employees')" :active="request()->routeIs('company.employees')" class="text-white hover:text-blue-200 font-medium">
+                                {{ __('Mis empleados') }}
+                            </x-nav-link>
+                        @else
+                            <x-nav-link :href="route('cv.index')" :active="request()->routeIs('cv.index')" class="text-white hover:text-blue-200 font-medium">
+                                {{ __('Mi CV') }}
+                            </x-nav-link>
+                        @endif
 
                         <x-nav-link :href="url('/calendar')" :active="request()->routeIs('calendar.*')" class="text-white hover:text-blue-200 font-medium">
                             {{ __('Calendario') }}
@@ -28,6 +31,7 @@
                         <x-nav-link :href="url('/documents')" :active="request()->routeIs('documents.*')" class="text-white hover:text-blue-200 font-medium">
                             {{ __('Portafolio') }}
                         </x-nav-link>
+
                     </div>
                 @endauth
             </div>
@@ -99,9 +103,15 @@
                     {{ __('Dashboard') }}
                 </x-responsive-nav-link>
 
-                <x-responsive-nav-link :href="route('cv.index')" :active="request()->routeIs('cv.index')" class="text-white hover:text-blue-200">
-                    {{ __('Mi CV') }}
-                </x-responsive-nav-link>
+                @if(Auth::user()->role === 'empresa')
+                    <x-responsive-nav-link :href="url('/company/employees')" :active="request()->routeIs('company.employees')" class="text-white hover:text-blue-200">
+                        {{ __('Mis empleados') }}
+                    </x-responsive-nav-link>
+                @else
+                    <x-responsive-nav-link :href="route('cv.index')" :active="request()->routeIs('cv.index')" class="text-white hover:text-blue-200">
+                        {{ __('Mi CV') }}
+                    </x-responsive-nav-link>
+                @endif
 
                 <x-responsive-nav-link :href="url('/calendar')" :active="request()->routeIs('calendar.*')" class="text-white hover:text-blue-200">
                     {{ __('Calendario') }}
